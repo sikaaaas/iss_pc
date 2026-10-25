@@ -24,6 +24,7 @@
 #define ISS_SYSV __attribute__((sysv_abi))
 #endif
 
+namespace Vulkan { extern std::atomic<std::uint64_t> g_iss_total_draws; } // scripted-route gameplay detection
 namespace iss::native_passes {
 namespace {
 using u8 = std::uint8_t;
@@ -1247,6 +1248,7 @@ void Finish(Segment& s, bool executed, u64 tick) {
     if (executed) {
         stats.executed.fetch_add(1, std::memory_order_relaxed);
         stats.executed_draws.fetch_add(s.draw_packets.size(), std::memory_order_relaxed);
+        Vulkan::g_iss_total_draws.fetch_add(s.draw_packets.size(), std::memory_order_relaxed);
         s.executed_tick.store(tick, std::memory_order_relaxed);
         s.state.store(Done, std::memory_order_release);
     } else {
