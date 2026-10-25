@@ -10,6 +10,7 @@
 #include "guest_heap_census.h"
 #include "native_passes.h"
 #include "vram_stats.h"
+#include "tex_replace.h"
 #include <cstdio>
 #include <cstdlib>
 #include <xxhash.h>
@@ -1419,6 +1420,7 @@ void TextureCache::RefreshImage(Image& image) {
     }
 
     runtime.UploadImage(&image, buffer, image_copies);
+    iss::tex_replace::OnImageUpload(image, runtime, image_copies);
     if (log_big) [[unlikely]] {
         const u64 t3 = Common::Perf::NowNs();
         static std::atomic<u32> logged{0};
